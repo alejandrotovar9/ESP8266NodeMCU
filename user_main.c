@@ -130,7 +130,7 @@ void wifi_test(void){
     //Setting Current Wifi OpMode
     wifi_set_opmode_current(STATION_MODE);
     os_printf("ESP8266 is now a WiFi Station! \n");
-    char ssid[32] = "JET Home";
+    char ssid[32] = "mywifi";
     char password[64] = "mypassword";
 
     struct station_config stationConf;
