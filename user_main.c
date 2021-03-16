@@ -74,23 +74,26 @@ void blinky(void *arg)
 
 
 //Callback Event Handler
-void eventHandler(System_Event_t *event) {switch(event->event) { //Syntax doubt
+void eventHandler(System_Event_t *event) 
+{ 
+    switch(event->event)
+    {
     case EVENT_STAMODE_CONNECTED:
         os_printf("Event: EVENT_STAMODE_CONNECTED\n");
     break;
     case EVENT_STAMODE_DISCONNECTED:
         os_printf("Event: EVENT_STAMODE_DISCONNECTED\n");
-	os_printf("Disconnect from ssid %s, reason %d\n", event->event_info.disconnected.ssid, event->event_info.disconnected.reason);
+        os_printf("Disconnect from ssid %s, reason %d\n", event->event_info.disconnected.ssid, event->event_info.disconnected.reason);
     break;
     case EVENT_STAMODE_AUTHMODE_CHANGE:
         os_printf("Event: EVENT_STAMODE_AUTHMODE_CHANGE\n");
     break;
     case EVENT_STAMODE_GOT_IP:
         os_printf("Event: EVENT_STAMODE_GOT_IP\n");
+        os_printf("Connected to Wifi! \n");
     break;
     case EVENT_SOFTAPMODE_STACONNECTED:
         os_printf("Event: EVENT_SOFTAPMODE_STACONNECTED\n");
-	os_printf("Connected to Wifi! \n");
     break;
     case EVENT_SOFTAPMODE_STADISCONNECTED:
         os_printf("Event: EVENT_SOFTAPMODE_STADISCONNECTED\n");
@@ -99,6 +102,7 @@ void eventHandler(System_Event_t *event) {switch(event->event) { //Syntax doubt
         os_printf("Unexpected event: %d\n", event->event);
     break;
     }
+}
 
 //WiFi Test Function
 void wifi_test(void){
