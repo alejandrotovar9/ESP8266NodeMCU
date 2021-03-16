@@ -72,20 +72,33 @@ void blinky(void *arg)
 	state ^= 1;
 }
 
-//Callback function called when the wifi connection is fully operational.
-void ICACHE_FLASH_ATTR WifiConnectedCb(System_Event_t *event)
-{   
-    if(event->event == EVENT_STAMODE_DISCONNECTED)
-    {
-        os_printf("Disconnect from ssid %s, reason %d\n", event->event_info.disconnected.ssid, event->event_info.disconnected.reason);
+
+//Callback Event Handler
+void eventHandler(System_Event_t *event) {switch(event->event) { //Syntax doubt
+    case EVENT_STAMODE_CONNECTED:
+        os_printf("Event: EVENT_STAMODE_CONNECTED\n");
+    break;
+    case EVENT_STAMODE_DISCONNECTED:
+        os_printf("Event: EVENT_STAMODE_DISCONNECTED\n");
+	os_printf("Disconnect from ssid %s, reason %d\n", event->event_info.disconnected.ssid, event->event_info.disconnected.reason);
+    break;
+    case EVENT_STAMODE_AUTHMODE_CHANGE:
+        os_printf("Event: EVENT_STAMODE_AUTHMODE_CHANGE\n");
+    break;
+    case EVENT_STAMODE_GOT_IP:
+        os_printf("Event: EVENT_STAMODE_GOT_IP\n");
+    break;
+    case EVENT_SOFTAPMODE_STACONNECTED:
+        os_printf("Event: EVENT_SOFTAPMODE_STACONNECTED\n");
+	os_printf("Connected to Wifi! \n");
+    break;
+    case EVENT_SOFTAPMODE_STADISCONNECTED:
+        os_printf("Event: EVENT_SOFTAPMODE_STADISCONNECTED\n");
+    break;
+    default:
+        os_printf("Unexpected event: %d\n", event->event);
+    break;
     }
-   
-    /* Run OTA process only when we are fully connected to WiFi */
-    if(event->event == EVENT_STAMODE_GOT_IP)
-    {
-        os_printf("Connected to Wifi (EVENT_STAMODE_GOT_IP) \n");
-    }   
-}
 
 //WiFi Test Function
 void wifi_test(void){
@@ -115,7 +128,7 @@ void wifi_test(void){
     }
     
     //Callback Function for the wifi_station_scan Function BUSCAR
-    void scanCB(void *arg, STATUS status){
+    void scan_cb(void *arg, STATUS status){
         struct bss_info *bssInfo;bssInfo = (struct bss_info *)arg;// skip the first in the chain ... it is invalid
         bssInfo = STAILQ_NEXT(bssInfo, next);
         while(bssInfo != NULL) {
@@ -125,7 +138,7 @@ void wifi_test(void){
     }
 
     //Looking for Nearby APs
-    os_printf("The nearby APs are: %u \n", wifi_station_scan(NULL,scanCB)); 
+    os_printf("The nearby APs are: %u \n", wifi_station_scan(NULL,scan_cb)); 
 
     //Setting Current Wifi OpMode
     wifi_set_opmode_current(STATION_MODE);
@@ -140,7 +153,7 @@ void wifi_test(void){
     os_memcpy(&stationConf.password, password, 64);
     wifi_station_disconnect();
     wifi_station_set_config_current(&stationConf);//Setting WiFi in current run
-    wifi_set_event_handler_cb(WifiConnectedCb);
+    wifi_set_event_handler_cb(eventHandler);
 
     if(wifi_station_connect())
     {
